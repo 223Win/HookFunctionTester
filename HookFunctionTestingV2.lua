@@ -7,7 +7,7 @@
     luau inlining fucked me last time
 ]]--
 
-local Version = "2.6.3"
+local Version = "2.6.4"
 
 local Player = game:GetService("Players").LocalPlayer
 local ClientHandler = Player:FindFirstChild("Req",true) :: BindableFunction
@@ -407,7 +407,7 @@ Test("[RC]->[L]",function()
     local old
     old = hookfunction(C.ToHookRC,C.ToHookWithL)
 
-    if game:IsLoaded() ~= false then
+    if C.ToHookRC(game) ~= false then
         return 0, "Failed to hook - Did not return false?"
     end
     if old(game) ~= true then
@@ -435,9 +435,13 @@ Test("[RC]->[NC]",function()
 
     local old
     old = hookfunction(C.ToHookRC, C.ToHookWithNC)
-    local res = game:GetTags()
+    local res = C.ToHookRC(game)
     if res[1] ~= "Changed" or res[2] ~= "HFTV2" then
         return 0, "Failed to hook - Did not return {'Changed','HFTV2'}?"
+    end
+    print(old(game))
+    for i,v in old(game) do
+        print(i,v)
     end
     if table.find(old(game),"_HFTV2") == nil then
         return 0, "Old function was incorrect - Did not have _HFTV2 in the table?"
