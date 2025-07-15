@@ -7,7 +7,7 @@
     luau inlining fucked me last time
 ]]--
 
-local Version = "2.4.2"
+local Version = "2.6.3"
 
 local Player = game:GetService("Players").LocalPlayer
 local ClientHandler = Player:FindFirstChild("Req",true) :: BindableFunction
@@ -172,6 +172,7 @@ Test("[L]->[RC]",function()
     old = hookfunction(ToHookL,C.ToHookWithRC)
     
     if ToHookL(game,"ReplicatedFirst") ~= game:GetService("ReplicatedFirst") then
+        print(ToHookL(game,"ReplicatedFirst"))
         return 0, "Failed to hook - Did not return the specified Roblox Service?"
     end
     if old() ~= false then
@@ -381,8 +382,18 @@ Test("[C]->[RC]",function()
     local old
     old = hookfunction(C.ToHookC, C.ToHookWithRC)
 
-    assert(C.ToHookC("TestService") == game:GetService("TestService"),"Failed to hook- Did not return the specified Roblox Service?")
-    assert(old(math.random()) == 1, "Old Function was incorrect - Did not return 1?")
+    if C.ToHookC("TestService") ~= game:GetService("TestService") then
+        return 0,"Failed to hook- Did not return the specified Roblox Service?"
+    end
+    if old(math.random()) ~= 1 then
+        return 0,"Old Function was incorrect - Did not return 1?"
+    end
+
+    if Restore then
+        Restore(C.ToHookC)
+    end
+
+    return 1
 end)
 
 Test("[RC]->[L]",function()
@@ -452,11 +463,13 @@ Test("[RC]->[C]",function()
     C.ToHookWithC = math.abs
     local old
     old = hookfunction(C.ToHookRC,C.ToHookWithC)
-    local res = game:WaitForChild(x)
+    local res = C.ToHookRC(raxz)
     if res ~= rawx then
+        print(res,rawx)
         return 0, string.format("Failed to hook - Did not return number %d?",rawx)
     end
-    if old(x) ~= zy then
+    print(debug.info(old,"n"))
+    if old(game,x) ~= zy then
         return 0, "Old function was incorrect - Did not return the specific instance?"
     end
     
@@ -475,8 +488,9 @@ Test("[RC]->[RC]",function()
     
     local old
     old = hookfunction(C.ToHookRC,C.ToHookWithRC)
-    local res = game:GetService("ReplicatedStorage")
+    local res = C.ToHookRC(game)
     if res ~= "Ugc" then
+        print(res)
         return 0, "Failed to hook - Did not return Ugc?"
     end
     if old(game,"RunService") ~= XZ then
