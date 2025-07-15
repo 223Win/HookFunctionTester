@@ -1,1 +1,1 @@
-local repo = "https://github.com/223Win/HookFunctionTester"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/223Win/HookFunctionTester/refs/heads/main/HookFunctionTestingV2.lua")) -- loader is used to help with the file (if I ever change the name)
