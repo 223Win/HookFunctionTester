@@ -571,3 +571,7 @@ if not Restore then
 	)
     print("----------------------------------------------")
 end
+print("Credits: ")
+print("\t Shadow(Discord: shadow6698)")
+print("\t Arman(Discord: armandukx)")
+print("----------------------------------------------")
