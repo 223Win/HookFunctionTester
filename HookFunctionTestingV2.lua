@@ -7,7 +7,7 @@
     luau inlining fucked me last time
 ]]--
 
-local Version = "2.6.4"
+local Version = "2.6.5"
 
 local Player = game:GetService("Players").LocalPlayer
 local ClientHandler = Player:FindFirstChild("Req",true) :: BindableFunction
@@ -285,7 +285,7 @@ Test("[NC]->[RC]",function()
     local old
     old = hookfunction(C.ToHookNC, C.ToHookWithRC)
 
-    if C.ToHookNC("CorePackages") ~= game:GetService("CorePackages") then
+    if C.ToHookNC(game,"CorePackages") ~= game:GetService("CorePackages") then
         return 0, "Failed to hook - Did not return the specified Roblox Service?"
     end
     if old() ~= false then
@@ -382,7 +382,7 @@ Test("[C]->[RC]",function()
     local old
     old = hookfunction(C.ToHookC, C.ToHookWithRC)
 
-    if C.ToHookC("TestService") ~= game:GetService("TestService") then
+    if C.ToHookC(game,"TestService") ~= game:GetService("TestService") then
         return 0,"Failed to hook- Did not return the specified Roblox Service?"
     end
     if old(math.random()) ~= 1 then
