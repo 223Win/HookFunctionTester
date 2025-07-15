@@ -22,7 +22,9 @@ local Detections = 0
 local PassedList = {}
 
 local function Test(TestName:string,func:()->(number,string?))
-    local ErrorCode,Result = func()
+    local PcallResult = {pcall(func)}
+    local ErrorCode = if PcallResult[1] then PcallResult[2] else 0
+    local Result = if PcallResult[1] then PcallResult[3] else PcallResult[2]
 
     if ErrorCode == 1 then
         Passed+=1
