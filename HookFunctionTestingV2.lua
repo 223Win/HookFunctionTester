@@ -56,10 +56,10 @@ local function TestForDetection(TestName:string,func:()->number)
     elseif WasDetected == 3 then
         -- bro how does this even happen 💔🌹
         Detections+=1 -- yes ur getting a detection for this horrid performance 
-        warn("❓ Detection"..TestName..": Cannot test • hookfunction did not hook the functions correctly")
+        warn("❓ Detection "..TestName..": Cannot test • hookfunction did not hook the functions correctly")
     elseif WasDetected == 5 then
         Detections+=1
-        warn("❓ Detection"..TestName..": Cannot test • ",Pcallresult[2])
+        warn("❓ Detection "..TestName..": Cannot test • ",Pcallresult[2])
     end
 end
 
