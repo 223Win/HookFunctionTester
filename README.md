@@ -12,3 +12,6 @@ To ensure accurate results please join:
 https://www.roblox.com/games/121340635258391/hookfunc-detect
 
 Some tests may fail if you are not in this game.
+
+**Note**
+If your executor crashes during any of these tests consider getting a better one! 
