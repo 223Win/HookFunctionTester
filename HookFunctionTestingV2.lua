@@ -42,7 +42,7 @@ local function Test(TestName:string,func:()->(number,string?))
 end
 
 local function TestForDetection(TestName:string,func:()->number)
-    local Pcallresult = pcall(func)
+    local Pcallresult = {pcall(func)}
     local WasDetected = if Pcallresult[1] then Pcallresult[2] else 5
     if WasDetected == 1 then
         Detections+=1
