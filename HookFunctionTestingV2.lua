@@ -368,7 +368,7 @@ Test("[RC]->[RC]",function()
     local old
     old = hookfunction(C.ToHookRC,C.ToHookWithRC)
     local res = game:GetService("ReplicatedStorage")
-    assert(res == "","Failed to hook - Did not return a empty string?")
+    assert(res == "Ugc","Failed to hook - Did not return Ugc?")
     assert(old("RunService") == XZ,"Old function was incorrect - Did not return the specific Service?")
 end)
 
