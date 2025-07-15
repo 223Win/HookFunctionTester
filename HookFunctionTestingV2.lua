@@ -439,10 +439,6 @@ Test("[RC]->[NC]",function()
     if res[1] ~= "Changed" or res[2] ~= "HFTV2" then
         return 0, "Failed to hook - Did not return {'Changed','HFTV2'}?"
     end
-    print(old(game))
-    for i,v in old(game) do
-        print(i,v)
-    end
     if table.find(old(game),"_HFTV2") == nil then
         return 0, "Old function was incorrect - Did not have _HFTV2 in the table?"
     end
