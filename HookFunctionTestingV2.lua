@@ -629,22 +629,6 @@ TestForDetection("Function Environment[2]",function()
     end
 end)
 
-local maxatron = 0
-
-xpcall(function()
-    game:rape()
-end,function()
-    for i=1,500 do
-        local f = debug.info(i,"f")
-        if f ~= nil then
-            maxatron+=1
-        else
-            break
-        end
-        print("[",i,"]",debug.info(i,"snlaf"))
-    end
-end)
-
 TestForDetection("Executor Security", function()
     local Detected = ClientHandler:Invoke("META_SECURITY")
     if Detected then
