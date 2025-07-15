@@ -483,6 +483,10 @@ Test("[RC]->[RC]",function()
         return 0, "Old function was incorrect - Did not return the specific Service?"
     end
 
+    if Restore then
+        Restore(C.ToHookRC)
+    end
+
     return 1
 end)
 
