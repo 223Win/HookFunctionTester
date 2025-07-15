@@ -20,17 +20,21 @@ local Detections = 0
 
 local PassedList = {}
 
-local function Test(TestName:string,func:()->nil)
-    local S,R = pcall(func)
+local function Test(TestName:string,func:()->(number,string?))
+    local ErrorCode,Result = func()
 
-    if S then
+    if ErrorCode == 1 then
         Passed+=1
         print("✅ "..TestName.." : Passed")
         PassedList[TestName] = true
-    else
+    elseif ErrorCode == 0 then
         Failed+=1
-        warn("⛔ "..TestName.." : Failed • "..R)
+        warn("⛔ "..TestName.." : Failed • "..Result)
         PassedList[TestName] = false
+    elseif ErrorCode == 2 then
+        -- warning from test (potental problem)
+        Failed+=1
+        warn("⚠️ "..TestName.." : "..Result)
     end
 end
 
@@ -73,14 +77,21 @@ Test("[L]->[L]", function()
 
     local old
     old = hookfunction(C.ToHookL, C.ToHookWithL)
-    
-    assert(C.ToHookL() == true,"Failed to hook - Did not return true?")
-    assert(old() == false,"Old Function was incorrect - Did not return false?")
+    if C.ToHookL() ~= true then
+        return 0, "Failed to hook - Did not return true?"
+    end
+    if old() ~= false then
+        return 0, "Old Function was incorrect - Did not return false?"
+    end
+    if BadBoy ~= 1 then
+        return 0,"Integrity Check Failed (big bad fake hook)"
+    end
 
-    assert(BadBoy == 1, "Integrity Check Failed (big bad fake hook)")
     if Restore then
         Restore(C.ToHookL)
     end
+
+    return 1
 end)
 
 Test("[L]->[NC]", function()
@@ -98,12 +109,20 @@ Test("[L]->[NC]", function()
 
     local old
     old = hookfunction(C.ToHookL, C.ToHookWithL)
-    assert(C.ToHookL() == true,"Failed to hook - Did not return true?")
-    assert(old() == false,"Old Function was incorrect - Did not return false?")
-    assert(BadBoy == 7, "Integrity Check Failed (big bad fake hook)")
+    if C.ToHookL() ~= true then
+        return 0, "Failed to hook - Did not return true?"
+    end
+    if old() ~= false then
+        return 0, "Old Function was incorrect - Did not return false?"
+    end
+    if BadBoy ~= 7 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
     if Restore then
         Restore(C.ToHookL)
     end
+
+    return 1
 end)
 
 Test("[L]->[C]", function()
@@ -117,12 +136,20 @@ Test("[L]->[C]", function()
     C.ToHookWithL = string.len
     local old
     old = hookfunction(C.ToHookL, C.ToHookWithL)
-    assert(C.ToHookL("Hyperion") == 8,"Failed to hook - Did not return 8?")
-    assert(old() == false,"Old Function was incorrect - Did not return false?")
-    assert(BadBoy == -8, "Integrity Check Failed (big bad fake hook)")
+    if C.ToHookL("Hyperion") ~= 8 then
+        return 0, "Failed to hook - Did not return 8?"
+    end
+    if old() ~= false then
+        return 0, "Old Function was incorrect - Did not return false?"
+    end
+    if BadBoy ~= -8 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
     if Restore then
         Restore(C.ToHookL)
     end
+
+    return 1
 end)
 
 Test("[L]->[RC]",function()
@@ -137,8 +164,14 @@ Test("[L]->[RC]",function()
     local old
     old = hookfunction(C.ToHookL,C.ToHookWithL)
     
-    assert(C.ToHookL("ReplicatedFirst") == game:GetService("ReplicatedFirst"),"Failed to hook - Did not return the specified Roblox Service?")
-    assert(old() == false, "Old Function was incorrect - Did not return false?")
+    if C.ToHookL("ReplicatedFirst") ~= game:GetService("ReplicatedFirst") then
+        return 0, "Failed to hook - Did not return the specified Roblox Service?"
+    end
+    if old() ~= false then
+        return 0, "Old Function was incorrect - Did not return false?"
+    end
+
+    return 1
 end)
 
 Test("[NC]->[L]", function()
@@ -156,13 +189,20 @@ Test("[NC]->[L]", function()
     local old
     old = hookfunction(C.ToHookNC, C.ToHookWithL)
     
-    assert(C.ToHookNC() == true,"Failed to hook - Did not return true?")
-    assert(old() == false,"Old Function was incorrect - Did not return false?")
-
-    assert(BadBoy == 5, "Integrity Check Failed (big bad fake hook)")
+    if C.ToHookNC() ~= true then
+        return 0, "Failed to hook - Did not return true?"
+    end
+    if old() ~= false then
+        return 0, "Old Function was incorrect - Did not return false?"
+    end
+    if BadBoy ~= 5 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
     if Restore then
         Restore(C.ToHookNC)
     end
+
+    return 1
 end)
 
 Test("[NC]->[NC]", function()
@@ -181,13 +221,20 @@ Test("[NC]->[NC]", function()
     local old
     old = hookfunction(C.ToHookNC, C.ToHookWithNC)
     
-    assert(C.ToHookNC() == true,"Failed to hook - Did not return true?")
-    assert(old() == false,"Old Function was incorrect - Did not return false?")
-
-    assert(BadBoy == -3, "Integrity Check Failed (big bad fake hook)")
+    if C.ToHookNC() ~= true then
+        return 0, "Failed to hook - Did not return true?"
+    end
+    if old() ~= false then
+        return 0, "Old Function was incorrect - Did not return false?"
+    end
+    if BadBoy ~= -3 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
     if Restore then
         Restore(C.ToHookNC)
     end
+
+    return 1
 end)
 
 Test("[NC]->[C]", function()
@@ -202,13 +249,20 @@ Test("[NC]->[C]", function()
     local old
     old = hookfunction(C.ToHookNC, C.ToHookWithC)
     
-    assert(C.ToHookNC(51) == "3","Failed to hook - Did not return '3'?")
-    assert(old() == false,"Old Function was incorrect - Did not return false?")
-
-    assert(BadBoy == -6, "Integrity Check Failed (big bad fake hook)")
+    if C.ToHookNC(51) ~= "3" then
+        return 0, "Failed to hook - Did not return '3'?"
+    end
+    if old() ~= false then
+        return 0, "Old Function was incorrect - Did not return false?"
+    end
+    if BadBoy ~= -6 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
     if Restore then
         Restore(C.ToHookNC)
     end
+
+    return 1
 end)
 
 Test("[NC]->[RC]",function()
@@ -223,10 +277,17 @@ Test("[NC]->[RC]",function()
     local old
     old = hookfunction(C.ToHookNC, C.ToHookWithRC)
 
-    assert(C.ToHookNC("CorePackages") == game:GetService("CorePackages"), "Failed to hook - Did not return the specified Roblox Service?")
-    assert(old() == false, "Old Function was incorrect- Did not return false?")
+    if C.ToHookNC("CorePackages") ~= game:GetService("CorePackages") then
+        return 0, "Failed to hook - Did not return the specified Roblox Service?"
+    end
+    if old() ~= false then
+        return 0, "Old Function was incorrect - Did not return false?"
+    end
+    if BadBoy ~= 571 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
 
-    assert(BadBoy == 571, "Integrity Check Failed (big bad fake hook)")
+    return 1
 end)
 
 Test("[C]->[L]", function()
@@ -239,11 +300,17 @@ Test("[C]->[L]", function()
     local old
     old = hookfunction(C.ToHookC, C.ToHookWithL)
     
-    assert(C.ToHookC() == true,"Failed to hook - Did not return true?")
-    assert(old(51) == "3","Old Function was incorrect - Did not return '3'?")
+    if C.ToHookC() ~= true then
+        return 0, "Failed to hook - Did not return true?"
+    end
+    if old(51) ~= "3" then
+        return 0, "Old Function was incorrect - Did not return '3'?"
+    end
     if Restore then
         Restore(C.ToHookC)
     end
+
+    return 1
 end)
 
 Test("[C]->[NC]", function()
@@ -251,20 +318,27 @@ Test("[C]->[NC]", function()
     local C = {}
     local BadBoy = 0
     C.ToHookC = string.len
-    C.ToHookWithNC = newcclosure( function()
+    C.ToHookWithNC = newcclosure(function()
         BadBoy += 61
         return true
     end)
     local old
     old = hookfunction(C.ToHookC, C.ToHookWithNC)
     
-    assert(C.ToHookC() == true,"Failed to hook - Did not return true?")
-    assert(old("Hyperion") == 8,"Old Function was incorrect - Did not return 8?")
-
-    assert(BadBoy == 61, "Integrity Check Failed (big bad fake hook)")
+    if C.ToHookC() ~= true then
+        return 0, "Failed to hook - Did not return true?"
+    end
+    if old("Hyperion") ~= 8 then
+        return 0, "Old Function was incorrect - Did not return 8?"
+    end
+    if BadBoy ~= 61 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
     if Restore then
         Restore(C.ToHookC)
     end
+
+    return 1
 end)
 
 Test("[C]->[C]", function()
@@ -276,13 +350,20 @@ Test("[C]->[C]", function()
     local old
     old = hookfunction(C.ToHookC, C.ToHookWithC)
     
-    assert(C.ToHookC("HYPERION") == "hyperion","Failed to hook - Did not return hyperion?")
-    assert(old("hook") == "kooh","Old Function was incorrect - Did not return 'kooh'?")
-
-    assert(BadBoy == 0, "Integrity Check Failed (big bad fake hook)")
+    if C.ToHookC("HYPERION") ~= "hyperion" then
+        return 0, "Failed to hook - Did not return hyperion?"
+    end
+    if old("hook") ~= "kooh" then
+        return 0, "Old Function was incorrect - Did not return 'kooh'?"
+    end
+    if BadBoy ~= 0 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
     if Restore then
         Restore(C.ToHookC)
     end
+
+    return 1
 end)
 
 Test("[C]->[RC]",function()
@@ -308,13 +389,20 @@ Test("[RC]->[L]",function()
     local old
     old = hookfunction(C.ToHookRC,C.ToHookWithL)
 
-    assert(game:IsLoaded() == false,"Failed to hook - Did not return false?")
-    assert(old(game) == true, "Old function was incorrect - Did not return true?")
-
-    assert(BadBoy == 13, "Integrity Check Failed (big bad fake hook)")
+    if game:IsLoaded() ~= false then
+        return 0, "Failed to hook - Did not return false?"
+    end
+    if old(game) ~= true then
+        return 0, "Old function was incorrect - Did not return true?"
+    end
+    if BadBoy ~= 13 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
     if Restore then
         Restore(C.ToHookRC)
     end
+
+    return 1
 end)
 
 Test("[RC]->[NC]",function()
@@ -330,13 +418,20 @@ Test("[RC]->[NC]",function()
     local old
     old = hookfunction(C.ToHookRC, C.ToHookWithNC)
     local res = game:GetTags()
-    assert(res[1] == "Changed" and res[2] == "HFTV2", "Failed to hook - Did not return {'Changed','HFTV2'}?")
-    assert(table.find(old(game),"_HFTV2") ~= nil, "Old function was incorrect - Did not have _HFTV2 in the table?")
-
-    assert(BadBoy == 513, "Integrity Check Failed (big bad fake hook)")
+    if res[1] ~= "Changed" or res[2] ~= "HFTV2" then
+        return 0, "Failed to hook - Did not return {'Changed','HFTV2'}?"
+    end
+    if table.find(old(game),"_HFTV2") == nil then
+        return 0, "Old function was incorrect - Did not have _HFTV2 in the table?"
+    end
+    if BadBoy ~= 513 then
+        return 0, "Integrity Check Failed (big bad fake hook)"
+    end
     if Restore then
         Restore(C.ToHookRC)
     end
+
+    return 1
 end)
 
 Test("[RC]->[C]",function()
@@ -351,12 +446,18 @@ Test("[RC]->[C]",function()
     local old
     old = hookfunction(C.ToHookRC,C.ToHookWithC)
     local res = game:WaitForChild(x)
-    assert(res == rawx,string.format("Failed to hook - Did not return number %d?",rawx))
-    assert(old(x) == zy,"Old function was incorrect - Did not return the specific instance?")
+    if res ~= rawx then
+        return 0, string.format("Failed to hook - Did not return number %d?",rawx)
+    end
+    if old(x) ~= zy then
+        return 0, "Old function was incorrect - Did not return the specific instance?"
+    end
     
     if Restore then
         Restore(C.ToHookRC)
     end
+
+    return 1
 end)
 
 Test("[RC]->[RC]",function()
@@ -368,8 +469,14 @@ Test("[RC]->[RC]",function()
     local old
     old = hookfunction(C.ToHookRC,C.ToHookWithRC)
     local res = game:GetService("ReplicatedStorage")
-    assert(res == "Ugc","Failed to hook - Did not return Ugc?")
-    assert(old("RunService") == XZ,"Old function was incorrect - Did not return the specific Service?")
+    if res ~= "Ugc" then
+        return 0, "Failed to hook - Did not return Ugc?"
+    end
+    if old(game,"RunService") ~= XZ then
+        return 0, "Old function was incorrect - Did not return the specific Service?"
+    end
+
+    return 1
 end)
 
 TestForDetection("Function Signatures", function()
