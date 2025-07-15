@@ -1,6 +1,11 @@
 # HookFunctionTester
 Tests your executors hookfunction
 
+To test run:
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/223Win/HookFunctionTester/refs/heads/main/Loader"))()
+```
+
 
 To ensure accurate results please join:
 
