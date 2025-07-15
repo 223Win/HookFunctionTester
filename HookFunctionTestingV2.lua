@@ -1,4 +1,5 @@
 --!nocheck
+--!optimize 0
 --[[
 
     HookFunction Test V2
@@ -155,14 +156,14 @@ end)
 Test("[L]->[RC]",function()
     local C = {}
     local BadBoy = 0
-    function C.ToHookL()
+    local function ToHookL()
         BadBoy += 124
         return false
     end
     C.ToHookWithRC = game.GetService
 
     local old
-    old = hookfunction(C.ToHookL,C.ToHookWithRC)
+    old = hookfunction(ToHookL,C.ToHookWithRC)
     
     if C.ToHookL(game,"ReplicatedFirst") ~= game:GetService("ReplicatedFirst") then
         return 0, "Failed to hook - Did not return the specified Roblox Service?"
