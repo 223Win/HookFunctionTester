@@ -164,7 +164,7 @@ Test("[L]->[RC]",function()
     local old
     old = hookfunction(C.ToHookL,C.ToHookWithRC)
     
-    if C.ToHookL("ReplicatedFirst") ~= game:GetService("ReplicatedFirst") then
+    if C.ToHookL(game,"ReplicatedFirst") ~= game:GetService("ReplicatedFirst") then
         return 0, "Failed to hook - Did not return the specified Roblox Service?"
     end
     if old() ~= false then
