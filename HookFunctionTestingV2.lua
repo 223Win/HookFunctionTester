@@ -465,10 +465,8 @@ Test("[RC]->[C]",function()
     old = hookfunction(C.ToHookRC,C.ToHookWithC)
     local res = C.ToHookRC(raxz)
     if res ~= rawx then
-        print(res,rawx)
         return 0, string.format("Failed to hook - Did not return number %d?",rawx)
     end
-    print(debug.info(old,"n"))
     if old(game,x) ~= zy then
         return 0, "Old function was incorrect - Did not return the specific instance?"
     end
@@ -490,7 +488,6 @@ Test("[RC]->[RC]",function()
     old = hookfunction(C.ToHookRC,C.ToHookWithRC)
     local res = C.ToHookRC(game)
     if res ~= "Ugc" then
-        print(res)
         return 0, "Failed to hook - Did not return Ugc?"
     end
     if old(game,"RunService") ~= XZ then
