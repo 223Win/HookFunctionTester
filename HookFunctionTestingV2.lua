@@ -7,7 +7,7 @@
     luau inlining fucked me last time
 ]]--
 
-local Version = "2.7.0"
+local Version = "2.8.0"
 
 local Player = game:GetService("Players").LocalPlayer
 local ClientHandler = Player:FindFirstChild("Req",true) :: BindableFunction
@@ -651,6 +651,34 @@ TestForDetection("Function Environment[2]",function()
     end
 end)
 
+TestForDetection("Function Environment[3] Metamethods - DIRECT", function()
+    if not DidTestPass("[RC]->[L]") then
+        return 2
+    end
+    local old
+    local Hook = function(...)
+        return old(...)
+    end
+    getfenv(Hook)["_so-undetected_"] = 1
+    old = hookmetamethod(game,"__namecall",function(...)
+        return old(...)
+    end)
+    local _,Targettron = xpcall(function()
+        return game:_omgwowimsoundetected()
+    end,function()
+        return debug.info(2,"f")
+    end)
+    if Restore then
+        Restore(getrawmetatable(game).__namecall)
+    end
+
+    if getfenv(Targettron)["_so-undetected_"] then
+        return 1
+    else
+        return 0
+    end
+end)
+
 TestForDetection("Executor Security", function()
     local Detected = ClientHandler:Invoke("META_SECURITY")
     if Detected then
@@ -670,19 +698,15 @@ TestForDetection("Function Callstack (Metamethod Hooks)",function()
     end)
 
     local Detected = ClientHandler:Invoke("HOOK_STACKDETECTION")
+    if Restore then
+        Restore(getrawmetatable(game).__namecall)
+    end
     if Detected then
-        if Restore then
-            Restore(getrawmetatable(game).__namecall)
-        end
         return 1
     else
-        if Restore then
-            Restore(getrawmetatable(game).__namecall)
-        end
         return 0
     end
 end)
-
 
 -- RESULTS -- 
 
