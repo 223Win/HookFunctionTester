@@ -660,6 +660,29 @@ TestForDetection("Executor Security", function()
     end
 end)
 
+TestForDetection("Function Callstack (Metamethod Hooks)",function()
+    if not DidTestPass("[RC]->[L]") then
+        return 2
+    end
+    local old
+    old = hookmetamethod(game,"__namecall",function(...)
+        return old(...)
+    end)
+
+    local Detected = ClientHandler:Invoke("HOOK_STACKDETECTION")
+    if Detected then
+        if Restore then
+            Restore(getrawmetatable(game).__namecall)
+        end
+        return 1
+    else
+        if Restore then
+            Restore(getrawmetatable(game).__namecall)
+        end
+        return 0
+    end
+end)
+
 
 -- RESULTS -- 
 
