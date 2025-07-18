@@ -7,7 +7,7 @@
     luau inlining fucked me last time
 ]]--
 
-local Version = "2.6.5"
+local Version = "2.7.0"
 
 local Player = game:GetService("Players").LocalPlayer
 local ClientHandler = Player:FindFirstChild("Req",true) :: BindableFunction
