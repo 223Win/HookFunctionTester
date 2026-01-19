@@ -7,7 +7,7 @@
     luau inlining fucked me last time
 ]]--
 
-local Version = "2.8.1"
+local Version = "2.8.2"
 
 local Player = game:GetService("Players").LocalPlayer
 local ClientHandler = Player:FindFirstChild("Req",true) :: BindableFunction
@@ -140,11 +140,11 @@ Test("[L]->[C]", function()
         BadBoy -= 8
         return false
     end
-    C.ToHookWithL = string.len
+    C.ToHookWithL = string.upper
     local old
     old = hookfunction(C.ToHookL, C.ToHookWithL)
-    if C.ToHookL("Hyperion") ~= 8 then
-        return 0, "Failed to hook - Did not return 8?"
+    if C.ToHookL("hyperion") ~= "HYPERION" then
+        return 0, "Failed to hook - Did not return 'HYPERION'?"
     end
     if old() ~= false then
         return 0, "Old Function was incorrect - Did not return false?"
@@ -177,6 +177,10 @@ Test("[L]->[RC]",function()
     end
     if old() ~= false then
         return 0, "Old Function was incorrect - Did not return false?"
+    end
+
+    if Restore then
+        Restore(C.ToHookL)
     end
 
     return 1
@@ -293,6 +297,10 @@ Test("[NC]->[RC]",function()
     end
     if BadBoy ~= 571 then
         return 0, "Integrity Check Failed (big bad fake hook)"
+    end
+
+    if Restore then
+        Restore(C.ToHookL)
     end
 
     return 1
