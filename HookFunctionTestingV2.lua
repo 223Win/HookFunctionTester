@@ -301,7 +301,7 @@ end)
 Test("[C]->[L]", function()
 
     local C = {}
-    C.ToHookC = string.char
+    C.ToHookC = string.rep
     C.ToHookWithL = function()
         return true
     end
@@ -311,8 +311,8 @@ Test("[C]->[L]", function()
     if C.ToHookC() ~= true then
         return 0, "Failed to hook - Did not return true?"
     end
-    if old(51) ~= "3" then
-        return 0, "Old Function was incorrect - Did not return '3'?"
+    if old("dih",2) ~= "dihdih" then
+        return 0, "Old Function was incorrect - Did not return 'dihdih'?"
     end
     if Restore then
         Restore(C.ToHookC)
