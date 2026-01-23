@@ -300,7 +300,7 @@ Test("[NC]->[RC]",function()
     end
 
     if Restore then
-        Restore(C.ToHookL)
+        Restore(C.ToHookNC)
     end
 
     return 1
